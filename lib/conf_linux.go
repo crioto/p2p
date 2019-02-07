@@ -2,6 +2,7 @@
 
 package ptp
 
+// DefaultConfigLocation holds a location of configuration file for Linux
 const DefaultConfigLocation = "/etc/p2p.yaml"
 
 // Platform specific defaults

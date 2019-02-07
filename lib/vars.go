@@ -62,8 +62,10 @@ const (
 
 // Network Constants
 const (
-	MagicCookie uint16 = 0xabcd
-	HeaderSize  int    = 10
+	MagicCookie     uint16 = 0xabcd
+	MagicCookieLan  uint16 = 0xdeda
+	MagicCookieComm uint16 = 0xaded
+	HeaderSize      int    = 10
 )
 
 // Network Variables

@@ -7,6 +7,7 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+// Conf is a global configuration of p2p daemon
 type Conf struct {
 	IPTool  string `yaml:"iptool"`
 	TAPTool string `yaml:"taptool"`
@@ -15,6 +16,8 @@ type Conf struct {
 	PMTU    bool   `yaml:"pmtu"`
 }
 
+// Load will read specified configuration file
+// and unmarshal it into a struct
 func (c *Conf) Load(filepath string) error {
 	c.SetDefaults()
 	if filepath == "" {
@@ -31,6 +34,7 @@ func (c *Conf) Load(filepath string) error {
 	return nil
 }
 
+// SetDefaults will fill default values for the configuration
 func (c *Conf) SetDefaults() {
 	c.IPTool = DefaultIPTool
 	c.TAPTool = DefaultTAPTool
@@ -39,6 +43,7 @@ func (c *Conf) SetDefaults() {
 	c.PMTU = DefaultPMTU
 }
 
+// GetIPTool will return network configuration tool location
 func (c *Conf) GetIPTool(preset string) string {
 	if preset != "" {
 		return preset
@@ -46,6 +51,8 @@ func (c *Conf) GetIPTool(preset string) string {
 	return c.IPTool
 }
 
+// GetTAPTool returns path to TAP interface creation script
+// on Windows
 func (c *Conf) GetTAPTool(preset string) string {
 	if preset != "" {
 		return preset
@@ -53,6 +60,7 @@ func (c *Conf) GetTAPTool(preset string) string {
 	return c.TAPTool
 }
 
+// GetINFFile returns path to TAP driver inf file on Windows
 func (c *Conf) GetINFFile(preset string) string {
 	if preset != "" {
 		return preset
@@ -60,6 +68,7 @@ func (c *Conf) GetINFFile(preset string) string {
 	return c.INFFile
 }
 
+// GetMTU will return MTU value
 func (c *Conf) GetMTU(preset int) int {
 	if preset != 0 {
 		return preset
@@ -67,6 +76,7 @@ func (c *Conf) GetMTU(preset int) int {
 	return c.MTU
 }
 
+// GetPMTU will return pmtu mode
 func (c *Conf) GetPMTU() bool {
 	return c.PMTU
 }
