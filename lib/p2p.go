@@ -35,6 +35,7 @@ type PeerToPeer struct {
 	UsePMTU         bool                                 // Whether PMTU capabilities are enabled or not
 	StartedAt       time.Time                            // Timestamp of instance creation time
 	ConfiguredAt    time.Time                            // Time when configuration of the instance was finished
+	Socket          *Net
 }
 
 // PeerHandshake holds handshake information received from peer
@@ -206,10 +207,18 @@ func New(mac, hash, keyfile, key, ttl, target string, fwd bool, port int, outbou
 
 	p.setupHandlers()
 
-	p.UDPSocket = new(Network)
-	p.UDPSocket.Init("", port)
-	go p.UDPSocket.Listen(p.HandleP2PMessage)
-	go p.UDPSocket.KeepAlive(target)
+	p.Socket = new(Net)
+	err = p.Socket.Init(uint16(port))
+	if err != nil {
+		Log(Error, "Failed to start socket: %s", err.Error())
+		return nil
+	}
+	go p.Socket.listen()
+
+	// p.UDPSocket = new(Network)
+	// p.UDPSocket.Init("", port)
+	// go p.UDPSocket.Listen(p.HandleP2PMessage)
+	// go p.UDPSocket.KeepAlive(target)
 	p.waitForRemotePort()
 
 	// Create new DHT Client, configure it and initialize

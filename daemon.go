@@ -113,24 +113,25 @@ func ExecDaemon(port int, targetURL, sFile, profiling, syslog, logLevel, configF
 
 	ReadyToServe = false
 
-	bootstrapConnected := false
-	bootstrapLastConnection := time.Unix(0, 0)
+	// Disabled old DHT
+	// bootstrapConnected := false
+	// bootstrapLastConnection := time.Unix(0, 0)
 
-	for !bootstrapConnected {
-		if time.Since(bootstrapLastConnection) > time.Duration(time.Second*5) {
-			bootstrapLastConnection = time.Now()
-			err := bootstrap.init(targetURL)
-			if err == nil {
-				bootstrapConnected = true
-			} else {
-				ptp.Log(ptp.Error, "Failed to connect to %s", targetURL)
-			}
-		}
-		time.Sleep(time.Millisecond * 100)
-	}
+	// for !bootstrapConnected {
+	// 	if time.Since(bootstrapLastConnection) > time.Duration(time.Second*5) {
+	// 		bootstrapLastConnection = time.Now()
+	// 		err := bootstrap.init(targetURL)
+	// 		if err == nil {
+	// 			bootstrapConnected = true
+	// 		} else {
+	// 			ptp.Log(ptp.Error, "Failed to connect to %s", targetURL)
+	// 		}
+	// 	}
+	// 	time.Sleep(time.Millisecond * 100)
+	// }
 
-	go bootstrap.run()
-	go waitOutboundIP()
+	// go bootstrap.run()
+	// go waitOutboundIP()
 
 	proc := new(Daemon)
 	proc.init(sFile)

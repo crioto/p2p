@@ -5,15 +5,17 @@ import (
 	"net"
 )
 
+// Net is a networking subsystem
 type Net struct {
-	port    uint16
-	rPort   uint16
-	socket  *net.UDPConn
-	running bool
-	data    chan *Message
-	comm    chan *Message
+	port    uint16        // listening port
+	rPort   uint16        // remote port reported by discovery service
+	socket  *net.UDPConn  // network socket
+	running bool          // whether listener is running or not
+	data    chan *Message // channel to pass LAN messages to the system
+	comm    chan *Message // channel to pass communication message to the subsystem
 }
 
+// Init will initialize networking subsystem
 func (n *Net) Init(port uint16) error {
 	n.running = false
 	n.port = port
@@ -32,7 +34,11 @@ func (n *Net) Init(port uint16) error {
 	return nil
 }
 
+// Close will stop listener, data and comm channels
 func (n *Net) Close() error {
+	if !n.running {
+		return fmt.Errorf("already closed")
+	}
 	n.running = false
 	if n.socket != nil {
 		err := n.socket.Close()
@@ -52,7 +58,7 @@ func (n *Net) Close() error {
 	return nil
 }
 
-func (n *Net) listen(receivedCallback UDPReceivedCallback) error {
+func (n *Net) listen() error {
 	Log(Info, "Starting UDP listener")
 	if n.socket == nil {
 		return fmt.Errorf("nil socket")
@@ -88,6 +94,7 @@ func (n *Net) route(src *net.UDPAddr, msg *Message) {
 	}
 }
 
+// Send will marshal Message and send it to the destination
 func (n *Net) Send(msg *Message, dst *net.UDPAddr) error {
 	if msg == nil {
 		return fmt.Errorf("nil message")
@@ -99,6 +106,7 @@ func (n *Net) Send(msg *Message, dst *net.UDPAddr) error {
 	return n.SendRaw(data, dst)
 }
 
+// SendRaw will send bytes over socket
 func (n *Net) SendRaw(data []byte, dst *net.UDPAddr) error {
 	if n.socket == nil {
 		return fmt.Errorf("nil socket")
