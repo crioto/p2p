@@ -193,7 +193,9 @@ func waitOutboundIP() {
 	OutboundIP = net.ParseIP(bootstrap.ip)
 }
 
+// TODO: Obsolete
 func waitActiveBootstrap() {
+	return
 	for {
 		active := 0
 		for _, r := range bootstrap.routers {

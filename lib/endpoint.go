@@ -89,7 +89,7 @@ func (e *Endpoint) ping(ptpc *PeerToPeer, id string) error {
 	if ptpc == nil {
 		return fmt.Errorf("nil ptp")
 	}
-	if ptpc.UDPSocket == nil {
+	if ptpc.Socket == nil {
 		return fmt.Errorf("nil socket")
 	}
 	e.LastPing = time.Now()
@@ -97,13 +97,18 @@ func (e *Endpoint) ping(ptpc *PeerToPeer, id string) error {
 		return fmt.Errorf("nil addr")
 	}
 	payload := append([]byte("q"+id), []byte(e.Addr.String())...)
-	msg, err := ptpc.CreateMessage(MsgTypeXpeerPing, payload, 0, true)
-	if err != nil {
-		return err
-	}
+
+	msg := new(Message)
+	msg.MagicCookie = MagicCookieComm
+	msg.Payload = payload
+
+	// msg, err := ptpc.CreateMessage(MsgTypeXpeerPing, payload, 0, true)
+	// if err != nil {
+	// 	return err
+	// }
 	Log(Trace, "Sending ping to endpoint: %s", e.Addr.String())
-	_, err = ptpc.UDPSocket.SendMessage(msg, e.Addr)
-	return err
+	// _, err = ptpc.Socket.SendMessage(msg, e.Addr)
+	return ptpc.Socket.Send(msg, e.Addr)
 }
 
 func (e *Endpoint) updateLastContact() error {

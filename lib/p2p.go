@@ -17,7 +17,7 @@ var UsePMTU = false
 
 // PeerToPeer - Main structure
 type PeerToPeer struct {
-	UDPSocket       *Network                             // Peer-to-peer interconnection socket
+	// UDPSocket       *Network                             // Peer-to-peer interconnection socket
 	LocalIPs        []net.IP                             // List of IPs available in the system
 	Dht             *DHTClient                           // DHT Client
 	Crypter         Crypto                               // Cryptography subsystem
@@ -226,7 +226,8 @@ func New(mac, hash, keyfile, key, ttl, target string, fwd bool, port int, outbou
 	// a introduction packet along with a hash to a DHT bootstrap
 	// nodes that was hardcoded into it's code
 
-	Log(Debug, "Started UDP Listener at port %d", p.UDPSocket.GetPort())
+	lPort, _ := p.Socket.GetPorts()
+	Log(Debug, "Started UDP Listener at port %d", lPort)
 
 	p.Dht = new(DHTClient)
 	err = p.Dht.Init(p.Hash)
@@ -269,22 +270,23 @@ func (p *PeerToPeer) ReadDHT() error {
 // This method will block for seconds or unless we receive remote port
 // from echo server
 func (p *PeerToPeer) waitForRemotePort() error {
-	if p.UDPSocket == nil {
+	if p.Socket == nil {
 		return fmt.Errorf("waitForRemotePort: nil udp socket")
 	}
 	started := time.Now()
-	for p.UDPSocket.remotePort == 0 {
+	for p.Socket.rPort == 0 {
 		time.Sleep(time.Millisecond * 100)
 		if time.Since(started) > time.Duration(time.Second*3) {
 			break
 		}
 	}
-	if p.UDPSocket != nil && p.UDPSocket.remotePort == 0 {
+	if p.Socket != nil && p.Socket.rPort == 0 {
 		Log(Warning, "Didn't receive remote port")
-		p.UDPSocket.remotePort = p.UDPSocket.GetPort()
+		lPort, _ := p.Socket.GetPorts()
+		p.Socket.rPort = lPort
 		return fmt.Errorf("Didn't receive remote port")
 	}
-	Log(Warning, "Remote port received: %d", p.UDPSocket.remotePort)
+	Log(Warning, "Remote port received: %d", p.Socket.rPort)
 	return nil
 }
 

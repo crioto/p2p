@@ -279,12 +279,13 @@ func (p *PeerToPeer) packetPing(packet *protocol.DHTPacket) error {
 }
 
 func (p *PeerToPeer) packetProxy(packet *protocol.DHTPacket) error {
+	return nil
 	if packet == nil {
 		return fmt.Errorf("nil packet")
 	}
-	if p.UDPSocket == nil {
-		return fmt.Errorf("nil socket")
-	}
+	// if p.UDPSocket == nil {
+	// 	return fmt.Errorf("nil socket")
+	// }
 	if p.ProxyManager == nil {
 		return fmt.Errorf("nil proxy manager")
 	}
@@ -301,7 +302,7 @@ func (p *PeerToPeer) packetProxy(packet *protocol.DHTPacket) error {
 			go func() {
 				msg, err := p.CreateMessage(MsgTypeProxy, []byte(p.Dht.ID), 0, false)
 				if err == nil {
-					p.UDPSocket.SendMessage(msg, proxyAddr)
+					// p.UDPSocket.SendMessage(msg, proxyAddr)
 				}
 			}()
 		}

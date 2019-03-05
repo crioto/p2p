@@ -166,7 +166,7 @@ func commIPSetHandler(data []byte, p *PeerToPeer) ([]byte, error) {
 			copy(payload[2:38], p.Dht.ID)
 			copy(payload[38:42], ip)
 			msg, _ := p.CreateMessage(MsgTypeComm, payload, 0, true)
-			p.UDPSocket.SendMessage(msg, peer.Endpoint)
+			// p.UDPSocket.SendMessage(msg, peer.Endpoint)
 			return nil, nil
 		}
 	}

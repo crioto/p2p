@@ -123,3 +123,8 @@ func (n *Net) SendRaw(data []byte, dst *net.UDPAddr) error {
 	}
 	return nil
 }
+
+// GetPorts returns local and remote ports
+func (n *Net) GetPorts() (uint16, uint16) {
+	return n.port, n.rPort
+}
